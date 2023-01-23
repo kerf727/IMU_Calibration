@@ -1,8 +1,26 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy.optimize import least_squares
+import scipy.optimize as opt
+import csv
 
 g = 9.80665 # m/s^2
+
+# Sensor data
+acc_mps2 = np.array([])
+# acc_mps2 = np.array([[9.81, 0.1, -0.1],
+#                      [0.1, 9.70, 0.1],
+#                      [-0.1, 9.8, 0.0]])
+
+# Read calibration raw datapoints
+file_name = r'C:\Users\kylew\OneDrive\Documents\Programming\Python\IMU_Calibration\imu_cal_data.txt'
+with open(file_name) as csv_file:
+    csv_reader = csv.reader(csv_file, delimiter=',')
+    line_count = 0
+    for row in csv_reader:
+        np.append(acc_mps2, [row[0], row[1], row[2]])
+        line_count += 1
+        print(f'#{line_count}: [{row[0]}, {row[1]}, {row[2]}]')
+    print(f'Processed {line_count} lines.')
 
 # Initial guesses for LM algorithm
 alpha_yz_init = 0.0
@@ -18,12 +36,6 @@ b_z_init = 0.0
 theta_XL_init = np.array([alpha_yz_init, alpha_zy_init, alpha_zx_init,
                           s_x_init, s_y_init, s_z_init,
                           b_x_init, b_y_init, b_z_init])
-
-# Sensor data
-#TODO: Fake data for now, read in from text file eventually
-acc_mps2 = np.array([[9.81, 0.1, -0.1],
-                     [0.1, 9.70, 0.1],
-                     [-0.1, 9.8, 0.0]])
 
 def cost(theta_XL):
     alpha_yz = theta_XL[0]
@@ -66,9 +78,9 @@ def fun(theta_XL):
     return cost(theta_XL) # - cost(theta_XL_init)
 
 # https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.least_squares.html
-result = least_squares(fun, theta_XL_init)
-# result2 = least_squares(fun, theta_XL_init, method='lm', ftol=1e-9, xtol=1e-9)
-# TODO: Understand error when using method 'lm'
+# result = least_squares(fun, theta_XL_init)
+# result = opt.least_squares(fun, theta_XL_init, method='lm', ftol=1e-9, xtol=1e-9)
+result = opt.curve_fit(fun, theta_XL_init)
 
 print("Success: {}".format(result.success))
 print("{}".format(result.message))
