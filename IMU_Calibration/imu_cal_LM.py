@@ -9,7 +9,7 @@ g = 16384.0
 acc_mps2 = np.array([])
 
 # Read calibration raw datapoints
-file_name = r'C:\Users\kylew\OneDrive\Documents\Programming\Python\IMU_Calibration\imu_cal_data.txt'
+file_name = r'C:\Users\kylew\OneDrive\Documents\Programming\Python\IMU_Calibration\mpu6050_board1_cal_data.txt'
 with open(file_name) as csv_file:
     csv_reader = csv.reader(csv_file, delimiter=',')
     line_count = 0
