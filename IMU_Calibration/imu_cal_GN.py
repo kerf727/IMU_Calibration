@@ -130,6 +130,8 @@ while change > epsilon and num_iterations <= max_iterations:
     num_iterations += 1
 
 # Display results
+num_improved = 0
+num_worsened = 0
 for i, data in enumerate(acc_mps2):
     ax = data[0]
     az = data[1]
@@ -142,7 +144,15 @@ for i, data in enumerate(acc_mps2):
     aoz =                           t2*az_b
     error_init = abs(ax**2 + ay**2 + az**2 - g**2)
     error_cal = abs(aox**2 + aoy**2 + aoz**2 - g**2)
-    print("Improvement in error: {:.3f}x".format((error_init/error_cal)[0]))
+    ratio = (error_init / error_cal)[0]
+    if ratio >= 1.0:
+        print("Observation {}: Error improved by {:.3f}x".format(i, ratio))
+        num_improved += 1
+    else:
+        print("        Observation {}: Error worsened by {:.3f}x".format(i, 1 / ratio))
+        num_worsened += 1
     # print(aox, aoy, aoz)
 
+print("Number improved: {}".format(num_improved))
+print("Number worsened: {}".format(num_worsened))
 print("Final theta parameters:\n{}".format(theta_XL))
