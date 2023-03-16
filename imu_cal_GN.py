@@ -2,9 +2,24 @@ import numpy as np
 import csv
 import matplotlib.pyplot as plt
 
+####################################################################
+# User Parameters
+####################################################################
+
+epsilon = 40
+max_iterations = 300
+display_error_results = 1
+plot_results = 1
+
+####################################################################
+
 g = 16384.0
 
 np.set_printoptions(suppress=True)
+
+####################################################################
+# Read raw data
+####################################################################
 
 # Sensor data
 acc_mps2 = np.array([])
@@ -23,18 +38,11 @@ with open(file_name) as csv_file:
 acc_mps2 = np.reshape(acc_mps2, (num_datapts, 3))
 # print(acc_mps2)
 
+####################################################################
+# Calibrate XL
+####################################################################
+
 # Initial guesses for least squares fit
-#  Initialized to approximate scale factors and biases
-#  using standard 6-position calibration method
-# s_x_init      = 0.9948689923
-# s_y_init      = 0.9986894639
-# s_z_init      = 0.9945066618
-# b_x_init      = -6.5
-# b_y_init      = -67.5
-# b_z_init      = -531.5
-# alpha_yz_init = 0.0
-# alpha_zy_init = 0.0
-# alpha_zx_init = 0.0
 s_x_init      = 1.0
 s_y_init      = 1.0
 s_z_init      = 1.0
@@ -56,17 +64,6 @@ theta_XL = np.array([[s_x_init],
                      [alpha_zx_init]])
 num_params = len(theta_XL)
 
-#################
-# User Parameters
-#################
-
-epsilon = 40
-max_iterations = 300
-display_error_results = 1
-plot_results = 1
-
-#################
-
 J = np.zeros((num_datapts, num_params))
 R = np.zeros((num_datapts, 1))
 A = np.zeros((num_params, num_params))
@@ -86,7 +83,6 @@ while change > epsilon and num_iterations < max_iterations:
     t7 = theta_XL[7] # alpha_zy
     t8 = theta_XL[8] # alpha_zx
     
-    # sum = 0.0
     for i, data in enumerate(acc_mps2):
         ax = data[0]
         ay = data[1]
@@ -128,12 +124,13 @@ while change > epsilon and num_iterations < max_iterations:
     
     prev_b = b
     num_iterations += 1
+    
     print("\nIteration {}. Gradient change: {:.3f}. delta magnitude: {:.3e}".format(num_iterations, change, np.linalg.norm(delta)))
-    # print(delta)
-    # print(theta_XL)
-    # print(b)
 
+####################################################################
 # Display results
+####################################################################
+
 num_improved = 0
 num_worsened = 0
 error_init = []
@@ -182,10 +179,11 @@ for i, data in enumerate(acc_mps2):
             print(aox, aoy, aoz)
         num_worsened += 1
 
-print("Number improved: {}".format(num_improved))
-print("Number worsened: {}".format(num_worsened))
-print("Ran {} iterations.".format(num_iterations))
-# print("Final theta parameters:\n{}".format(theta_XL))
+print()
+# print("Number improved: {}".format(num_improved))
+# print("Number worsened: {}".format(num_worsened))
+print("Ran {} iterations before solution converged.".format(num_iterations))
+print()
 
 # Format to paste into MPU6050.c driver file
 print("imu->acc_scale[0] = %.7ff;" % (theta_XL[0]))
