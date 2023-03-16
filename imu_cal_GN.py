@@ -185,7 +185,18 @@ for i, data in enumerate(acc_mps2):
 print("Number improved: {}".format(num_improved))
 print("Number worsened: {}".format(num_worsened))
 print("Ran {} iterations.".format(num_iterations))
-print("Final theta parameters:\n{}".format(theta_XL))
+# print("Final theta parameters:\n{}".format(theta_XL))
+
+# Format to paste into MPU6050.c driver file
+print("imu->acc_scale[0] = %.7ff;" % (theta_XL[0]))
+print("imu->acc_scale[1] = %.7ff;" % (theta_XL[1]))
+print("imu->acc_scale[2] = %.7ff;" % (theta_XL[2]))
+print("imu->acc_bias[0]  = %.7ff;" % (theta_XL[3]))
+print("imu->acc_bias[1]  = %.7ff;" % (theta_XL[4]))
+print("imu->acc_bias[2]  = %.7ff;" % (theta_XL[5]))
+print("imu->acc_yz_rot   = %.7ff;" % (theta_XL[6]))
+print("imu->acc_zy_rot   = %.7ff;" % (theta_XL[7]))
+print("imu->acc_zx_rot   = %.7ff;" % (theta_XL[8]))
 
 if (plot_results == 1):
     plt.plot(error_init)
