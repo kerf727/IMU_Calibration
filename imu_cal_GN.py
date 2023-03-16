@@ -131,7 +131,7 @@ while change > epsilon and num_iterations < max_iterations:
     print("\nIteration {}. Gradient change: {:.3f}. delta magnitude: {:.3e}".format(num_iterations, change, np.linalg.norm(delta)))
     # print(delta)
     # print(theta_XL)
-    print(b)
+    # print(b)
 
 # Display results
 num_improved = 0
