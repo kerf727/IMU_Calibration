@@ -196,13 +196,20 @@ print("imu->acc_yz_rot   = %.7ff;" % (theta_XL[6]))
 print("imu->acc_zy_rot   = %.7ff;" % (theta_XL[7]))
 print("imu->acc_zx_rot   = %.7ff;" % (theta_XL[8]))
 
-if (plot_results == 1):
+if plot_results == 1:
+    plt.subplot(1, 2, 1)
     plt.plot(error_init)
     plt.plot(error_cal)
-    # plt.plot(ratio)
     plt.legend(["Uncalibrated", "Calibrated"], loc="upper center")
     plt.title("Error Improvement after Calibration")
     plt.grid(True)
     plt.xlabel("Observation Number")
     plt.ylabel("Error")
+    
+    plt.subplot(1, 2, 2)
+    plt.plot(ratio)
+    plt.title("Ratio of Uncalibrated to Calibrated Error")
+    plt.grid(True)
+    plt.xlabel("Observation Number")
+    plt.ylabel("Ratio")
     plt.show()
